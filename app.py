@@ -126,6 +126,16 @@ def registrar_venta():
     return render_template('vender.html', productos=lista_productos)
 
 
+# --- RUTA DE HISTORIAL ---
+@app.route('/historial')
+def ver_historial():
+    # Consultamos todas las ventas ordenadas por fecha (descendente)
+    # Venta.query.order_by(Venta.fecha.desc()) es SQL traducido a Python
+    ventas_realizadas = Venta.query.order_by(Venta.fecha.desc()).all()
+    return render_template('historial.html', ventas=ventas_realizadas)
+
+
+
 # Arrancar
 if __name__ == '__main__':
     app.run(debug=True)
