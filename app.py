@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pytz
 
 # 1. Configuración de Flask
 app = Flask(__name__)
@@ -13,6 +14,11 @@ app.config['SECRET_KEY'] = 'mi_clave_secreta_senati'
 
 # Inicializamos la DB
 db = SQLAlchemy(app)
+
+# --- FUNCIÓN PARA LA HORA DE PERÚ ---
+def obtener_hora_peru():
+    lima = pytz.timezone('America/Lima')
+    return datetime.now(lima)
 
 # --- MODELOS (TABLAS DE LA BASE DE DATOS) ---
 
@@ -28,7 +34,7 @@ class Producto(db.Model):
 # Tabla 2: Ventas (Cabecera de la boleta)
 class Venta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=obtener_hora_peru)
     total = db.Column(db.Float, default=0.0)
     # Relación: Una venta tiene muchos detalles
     detalles = db.relationship('DetalleVenta', backref='venta', lazy=True)
