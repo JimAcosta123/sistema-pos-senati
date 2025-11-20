@@ -36,6 +36,7 @@
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Stock</th>
+                    <th>Acciones</th> </tr>
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +51,11 @@
                         {% else %}
                             <span class="badge bg-success">{{ p.stock }}</span>
                         {% endif %}
+                    </td>
+                    <td>
+                        <a href="/eliminar/{{ p.id }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que quieres borrar este producto?');">
+                            Eliminar 🗑️
+                        </a>
                     </td>
                 </tr>
                 {% else %}
