@@ -141,6 +141,21 @@ def ver_historial():
     return render_template('historial.html', ventas=ventas_realizadas)
 
 
+# --- RUTA ELIMINAR PRODUCTO ---
+@app.route('/eliminar/<int:id>')
+def eliminar_producto(id):
+    producto_a_borrar = Producto.query.get_or_404(id)
+    
+    try:
+        db.session.delete(producto_a_borrar)
+        db.session.commit()
+        flash('Producto eliminado correctamente.', 'success')
+    except:
+        flash('Error al eliminar. Puede que tenga ventas asociadas.', 'danger')
+
+    return redirect(url_for('gestionar_productos'))
+
+
 
 # Arrancar
 if __name__ == '__main__':
