@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -46,6 +46,31 @@ class DetalleVenta(db.Model):
 def home():
     # En lugar de texto, ahora mostramos el archivo HTML
     return render_template('index.html')
+
+
+# --- RUTA DE INVENTARIO ---
+@app.route('/productos', methods=['GET', 'POST'])
+def gestionar_productos():
+    if request.method == 'POST':
+        # 1. Recibir datos del formulario HTML
+        nombre_form = request.form['nombre']
+        precio_form = float(request.form['precio'])
+        stock_form = int(request.form['stock'])
+
+        # 2. Crear el objeto Producto
+        nuevo_producto = Producto(nombre=nombre_form, precio=precio_form, stock=stock_form)
+
+        # 3. Guardar en Base de Datos
+        db.session.add(nuevo_producto)
+        db.session.commit()
+        
+        # 4. Recargar la página para ver el cambio
+        return redirect(url_for('gestionar_productos'))
+
+    # Si es GET, sacamos todos los productos de la DB
+    lista_productos = Producto.query.all()
+    return render_template('productos.html', productos=lista_productos)
+
 
 # Arrancar
 if __name__ == '__main__':

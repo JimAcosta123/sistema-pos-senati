@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5>Agregar Producto</h5>
+            </div>
+            <div class="card-body">
+                <form action="/productos" method="POST">
+                    <div class="mb-3">
+                        <label>Nombre del Producto</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej: Coca Cola 3L" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Precio (S/.)</label>
+                        <input type="number" name="precio" step="0.10" class="form-control" placeholder="0.00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Stock Inicial</label>
+                        <input type="number" name="stock" class="form-control" placeholder="Cantidad" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Guardar Producto 💾</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h3>Inventario Actual</h3>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in productos %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.nombre }}</td>
+                    <td>S/. {{ "%.2f"|format(p.precio) }}</td>
+                    <td>
+                        {% if p.stock < 5 %}
+                            <span class="badge bg-danger">{{ p.stock }} (Bajo)</span>
+                        {% else %}
+                            <span class="badge bg-success">{{ p.stock }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No hay productos registrados aún.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
