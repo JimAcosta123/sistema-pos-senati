@@ -156,6 +156,29 @@ def eliminar_producto(id):
     return redirect(url_for('gestionar_productos'))
 
 
+# --- RUTA EDITAR PRODUCTO ---
+@app.route('/editar/<int:id>', methods=['GET', 'POST'])
+def editar_producto(id):
+    producto = Producto.query.get_or_404(id)
+
+    if request.method == 'POST':
+        # Actualizamos los datos con lo que viene del formulario
+        producto.nombre = request.form['nombre']
+        producto.precio = float(request.form['precio'])
+        producto.stock = int(request.form['stock'])
+
+        try:
+            db.session.commit()
+            flash('Producto actualizado con éxito.', 'success')
+            return redirect(url_for('gestionar_productos'))
+        except:
+            flash('Error al actualizar el producto.', 'danger')
+            return redirect(url_for('gestionar_productos'))
+
+    # Si es GET, mostramos el formulario con los datos actuales
+    return render_template('editar_producto.html', producto=producto)
+
+
 
 # Arrancar
 if __name__ == '__main__':
