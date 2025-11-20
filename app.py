@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -70,6 +70,60 @@ def gestionar_productos():
     # Si es GET, sacamos todos los productos de la DB
     lista_productos = Producto.query.all()
     return render_template('productos.html', productos=lista_productos)
+
+
+# --- RUTA DE VENTAS ---
+@app.route('/vender', methods=['GET', 'POST'])
+def registrar_venta():
+    # Si enviaron el formulario (POST)
+    if request.method == 'POST':
+        producto_id = int(request.form['producto_id'])
+        cantidad = int(request.form['cantidad'])
+
+        # 1. Buscar el producto en la BD
+        producto = Producto.query.get_or_404(producto_id)
+
+        # 2. VALIDACIÓN: ¿Hay suficiente stock?
+        if cantidad > producto.stock:
+            flash(f'Error: No hay suficiente stock. Solo quedan {producto.stock}.', 'danger')
+            return redirect(url_for('registrar_venta'))
+
+        # 3. CALCULAR TOTAL
+        total_venta = producto.precio * cantidad
+
+        # 4. LOGICA TRANSACCIONAL (Atomocidad)
+        try:
+            # A. Crear la cabecera de la venta
+            nueva_venta = Venta(total=total_venta)
+            db.session.add(nueva_venta)
+            db.session.commit() # Guardamos para generar el ID de venta
+
+            # B. Crear el detalle
+            detalle = DetalleVenta(
+                venta_id=nueva_venta.id,
+                producto_id=producto.id,
+                cantidad=cantidad,
+                precio_unitario=producto.precio
+            )
+            db.session.add(detalle)
+
+            # C. RESTAR STOCK (Lo más importante)
+            producto.stock = producto.stock - cantidad
+
+            # D. Guardar todos los cambios
+            db.session.commit()
+            
+            flash(f'¡Venta exitosa! Total: S/. {total_venta}', 'success')
+
+        except Exception as e:
+            db.session.rollback() # Si algo falla, deshacer todo
+            flash('Hubo un error al procesar la venta.', 'danger')
+
+        return redirect(url_for('registrar_venta'))
+
+    # Si es GET (Solo ver la página)
+    lista_productos = Producto.query.all()
+    return render_template('vender.html', productos=lista_productos)
 
 
 # Arrancar
