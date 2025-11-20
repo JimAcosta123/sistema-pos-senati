@@ -44,7 +44,8 @@ class DetalleVenta(db.Model):
 # --- RUTAS ---
 @app.route('/')
 def home():
-    return "<h1>Sistema de Inventario con Base de Datos Configurada 💾</h1>"
+    # En lugar de texto, ahora mostramos el archivo HTML
+    return render_template('index.html')
 
 # Arrancar
 if __name__ == '__main__':

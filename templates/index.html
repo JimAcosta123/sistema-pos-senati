@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-4">Bienvenido al Sistema POS</h1>
+    <p class="lead">Control de inventario y ventas para negocios.</p>
+    <hr class="my-4">
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="/vender" class="btn btn-success btn-lg px-4 gap-3">Ir a Vender 💰</a>
+        <a href="/productos" class="btn btn-outline-primary btn-lg px-4">Ver Inventario 📦</a>
+    </div>
+</div>
+{% endblock %}
