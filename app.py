@@ -1,3 +1,6 @@
+import pandas as pd
+from flask import send_file
+import io
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -248,6 +251,36 @@ def editar_producto(id):
 
     # Si es GET, mostramos el formulario con los datos actuales
     return render_template('editar_producto.html', producto=producto)
+
+
+# --- RUTA EXPORTAR EXCEL ---
+@app.route('/exportar_excel')
+@login_required
+def exportar_excel():
+    # 1. Consultamos todas las ventas
+    ventas = Venta.query.all()
+    
+    # 2. Transformamos los datos a una lista de diccionarios
+    datos_lista = []
+    for v in ventas:
+        datos_lista.append({
+            'ID Boleta': v.id,
+            'Fecha': v.fecha.strftime('%d/%m/%Y %H:%M'),
+            'Total (S/.)': v.total
+        })
+    
+    # 3. Creamos un DataFrame de Pandas (Una tabla virtual)
+    df = pd.DataFrame(datos_lista)
+    
+    # 4. Guardamos en memoria (buffer) en vez de crear un archivo físico
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Ventas')
+    
+    output.seek(0)
+    
+    # 5. Enviamos el archivo al navegador
+    return send_file(output, download_name="reporte_ventas.xlsx", as_attachment=True)
 
 
 
