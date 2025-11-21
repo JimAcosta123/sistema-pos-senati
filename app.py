@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pytz
+# --- NUEVAS IMPORTACIONES DE SEGURIDAD ---
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # 1. Configuración de Flask
 app = Flask(__name__)
@@ -14,6 +17,17 @@ app.config['SECRET_KEY'] = 'mi_clave_secreta_senati'
 
 # Inicializamos la DB
 db = SQLAlchemy(app)
+
+# --- CONFIGURACIÓN DE LOGIN ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Si no estás logueado, te manda aquí
+
+# Esta función le dice a Flask cómo buscar al usuario en la BD
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
+
 
 # --- FUNCIÓN PARA LA HORA DE PERÚ ---
 def obtener_hora_peru():
@@ -46,6 +60,22 @@ class DetalleVenta(db.Model):
     producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
     precio_unitario = db.Column(db.Float, nullable=False) # Precio al momento de la venta
+    
+    
+    # Tabla 4: Usuarios (Para el Login)
+class Usuario(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False) # Nombre único
+    password_hash = db.Column(db.String(128)) # Guardaremos la clave encriptada, no en texto plano
+
+    # Función para encriptar la clave
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    # Función para revisar si la clave es correcta
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
 
 # --- RUTAS ---
 @app.route('/')
