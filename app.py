@@ -144,7 +144,15 @@ def gestionar_productos():
         return redirect(url_for('gestionar_productos'))
 
     # Si es GET, sacamos todos los productos de la DB
-    lista_productos = Producto.query.all()
+    query_busqueda = request.args.get('q') # Captura lo que escriben en el buscador
+    
+    if query_busqueda:
+        # Filtra si escribieron algo
+        lista_productos = Producto.query.filter(Producto.nombre.contains(query_busqueda)).all()
+    else:
+        # Si no escribieron nada, trae todo normal
+        lista_productos = Producto.query.all()
+        
     return render_template('productos.html', productos=lista_productos)
 
 
