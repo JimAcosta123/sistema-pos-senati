@@ -18,9 +18,23 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="/productos">Inventario</a></li>
                     <li class="nav-item"><a class="nav-link" href="/vender">Nueva Venta</a></li>
-                    <li class="nav-item"><a class="nav-link fw-bold" href="/historial">📜 Historial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/historial">Historial</a></li>
+
+                    <li class="nav-item border-start ms-2 ps-2">
+                        <span class="navbar-text text-white fw-bold">Hola, {{ current_user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="/logout">Salir 🚪</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ms-2" href="/login">Iniciar Sesión 🔐</a>
+                    </li>
+                {% endif %}
                 </ul>
             </div>
         </div>
