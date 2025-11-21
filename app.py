@@ -84,6 +84,42 @@ def home():
     return render_template('index.html')
 
 
+# --- RUTAS DE AUTENTICACIÓN ---
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Si ya está logueado, lo mandamos al inicio
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        user_form = request.form['username']
+        pass_form = request.form['password']
+
+        # Buscamos al usuario en la BD
+        usuario = Usuario.query.filter_by(username=user_form).first()
+
+        # Verificamos si existe y si la clave es correcta
+        if usuario and usuario.check_password(pass_form):
+            login_user(usuario) # <--- AQUÍ INICIA LA SESIÓN (Cookies)
+            flash(f'Bienvenido {usuario.username}', 'success')
+            
+            # Si intentó entrar a una pagina protegida, lo devolvemos ahí
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('home'))
+        else:
+            flash('Usuario o contraseña incorrectos', 'danger')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required # Solo puedes salir si ya entraste
+def logout():
+    logout_user() # <--- CIERRA LA SESIÓN
+    flash('Has cerrado sesión correctamente.', 'info')
+    return redirect(url_for('login'))
+
+
 # --- RUTA DE INVENTARIO ---
 @app.route('/productos', methods=['GET', 'POST'])
 def gestionar_productos():
