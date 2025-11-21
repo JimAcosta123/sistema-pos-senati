@@ -122,6 +122,7 @@ def logout():
 
 # --- RUTA DE INVENTARIO ---
 @app.route('/productos', methods=['GET', 'POST'])
+@login_required
 def gestionar_productos():
     if request.method == 'POST':
         # 1. Recibir datos del formulario HTML
@@ -146,6 +147,7 @@ def gestionar_productos():
 
 # --- RUTA DE VENTAS ---
 @app.route('/vender', methods=['GET', 'POST'])
+@login_required
 def registrar_venta():
     # Si enviaron el formulario (POST)
     if request.method == 'POST':
@@ -200,6 +202,7 @@ def registrar_venta():
 
 # --- RUTA DE HISTORIAL ---
 @app.route('/historial')
+@login_required
 def ver_historial():
     # Consultamos todas las ventas ordenadas por fecha (descendente)
     # Venta.query.order_by(Venta.fecha.desc()) es SQL traducido a Python
@@ -209,6 +212,7 @@ def ver_historial():
 
 # --- RUTA ELIMINAR PRODUCTO ---
 @app.route('/eliminar/<int:id>')
+@login_required
 def eliminar_producto(id):
     producto_a_borrar = Producto.query.get_or_404(id)
     
@@ -224,6 +228,7 @@ def eliminar_producto(id):
 
 # --- RUTA EDITAR PRODUCTO ---
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
 def editar_producto(id):
     producto = Producto.query.get_or_404(id)
 
