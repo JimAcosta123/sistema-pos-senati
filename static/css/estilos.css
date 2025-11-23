@@ -1,0 +1,77 @@
+/* =========================================
+   ESTILOS GENERALES DEL SISTEMA POS
+   ========================================= */
+
+/* 1. Fondo más agradable (ya no es blanco aburrido) */
+body {
+    background-color: #f4f6f9; /* Gris muy suave, descansa la vista */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* 2. Mejoras en las Tarjetas (Cards) */
+.card {
+    border: none; /* Quitamos el borde gris feo */
+    border-radius: 12px; /* Bordes más redondeados */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra elegante y suave */
+    transition: transform 0.2s; /* Preparado para animación */
+}
+
+/* Pequeño efecto al pasar el mouse sobre tarjetas de métricas */
+.card:hover {
+    transform: translateY(-2px); /* Se levanta un poquito */
+}
+
+/* 3. Títulos y Encabezados */
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* =========================================
+   ESTILOS DE TABLAS (COMMIT #2)
+   ========================================= */
+
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden; /* Para que las esquinas redondas se respeten */
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: #212529;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+/* EFECTO HOVER: Ilumina la fila cuando pasas el mouse */
+.table-hover tbody tr:hover {
+    background-color: #e2e6ea; /* Color de resaltado */
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Alineación vertical centrada para celdas */
+.table td, .table th {
+    vertical-align: middle;
+}
+
+/* =========================================
+   DETALLES FINOS
+   ========================================= */
+
+/* Botones con esquinas suaves */
+.btn {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+/* Las etiquetas de stock (Badges) más grandes y legibles */
+.badge {
+    padding: 0.5em 0.8em;
+    font-size: 0.85em;
+    border-radius: 4px;
+}
