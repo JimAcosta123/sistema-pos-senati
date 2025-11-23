@@ -389,11 +389,16 @@ def acerca():
     return render_template('acerca.html')
 
 
-# --- RUTA DE RESPALDO (BACKUP) ---
+# --- RUTA DE RESPALDO (BACKUP)
 @app.route('/backup_db')
 @login_required
 def descargar_backup():
-    return send_file('inventario.db', as_attachment=True, download_name="backup_inventario.sqlite")
+    # Agregamos 'instance/' a la ruta
+    try:
+        return send_file('instance/inventario.db', as_attachment=True, download_name="backup_inventario.sqlite")
+    except FileNotFoundError:
+        
+        return send_file('inventario.db', as_attachment=True, download_name="backup_inventario.sqlite")
 
 
 # Arrancar
