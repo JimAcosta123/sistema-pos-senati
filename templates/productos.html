@@ -53,7 +53,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for p in productos %}
+                {% for p in pagination.items %}
                 <tr>
                     <td>{{ p.id }}</td>
                     <td>{{ p.nombre }}</td>
@@ -80,5 +80,44 @@
             </tbody>
         </table>
     </div>
+
+
+    <nav aria-label="Navegación de inventario" class="mt-4">
+    <ul class="pagination justify-content-center">
+        
+        {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('gestionar_productos', page=pagination.prev_num, q=request.args.get('q', '')) }}">Anterior</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if pagination.page == page_num %}
+                <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('gestionar_productos', page=page_num, q=request.args.get('q', '')) }}">{{ page_num }}</a>
+                </li>
+                {% endif %}
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('gestionar_productos', page=pagination.next_num, q=request.args.get('q', '')) }}">Siguiente</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        {% endif %}
+    </ul>
+    <p class="text-center text-muted small">Página {{ pagination.page }} de {{ pagination.pages }}</p>
+</nav>
+
+
 </div>
 {% endblock %}

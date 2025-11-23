@@ -1,13 +1,65 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="text-center mt-5">
-    <h1 class="display-4">Bienvenido al Sistema POS</h1>
-    <p class="lead">Control de inventario y ventas para negocios.</p>
-    <hr class="my-4">
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+<div class="text-center mt-4">
+    <h1 class="display-5">Bienvenido al Sistema POS</h1>
+    <p class="lead">Control de inventario y ventas.</p>
+    
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
         <a href="/vender" class="btn btn-success btn-lg px-4 gap-3">Ir a Vender 💰</a>
         <a href="/productos" class="btn btn-outline-primary btn-lg px-4">Ver Inventario 📦</a>
     </div>
+
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    Niveles de Stock Actual 📊
+                </div>
+                <div class="card-body">
+                    <canvas id="miGrafico"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Cuando la página cargue, pedimos los datos a Python
+    fetch('/api/datos_grafico')
+        .then(response => response.json()) // Convertimos la respuesta a JSON
+        .then(data => {
+            // Configuración del Gráfico
+            const ctx = document.getElementById('miGrafico').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Tipo de gráfico: Barras
+                data: {
+                    labels: data.nombres, // Nombres de productos (Eje X)
+                    datasets: [{
+                        label: 'Stock Disponible',
+                        data: data.stocks, // Cantidades (Eje Y)
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)', // Azul
+                            'rgba(255, 99, 132, 0.6)', // Rojo
+                            'rgba(255, 206, 86, 0.6)', // Amarillo
+                            'rgba(75, 192, 192, 0.6)'  // Verde
+                        ],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true // Que empiece en 0
+                        }
+                    }
+                }
+            });
+        });
+</script>
 {% endblock %}
