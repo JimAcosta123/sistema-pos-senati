@@ -183,6 +183,7 @@ def registrar_venta():
 
         # 2. VALIDACIÓN: ¿Hay suficiente stock?
         if cantidad > producto.stock:
+            print(f"ALERTA DE SEGURIDAD: Intento de venta sin stock. Prod: {producto.id}")
             flash(f'Error: No hay suficiente stock. Solo quedan {producto.stock}.', 'danger')
             return redirect(url_for('registrar_venta'))
 
