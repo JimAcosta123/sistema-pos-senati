@@ -83,8 +83,23 @@ class Usuario(UserMixin, db.Model):
 # --- RUTAS ---
 @app.route('/')
 def home():
-    # En lugar de texto, ahora mostramos el archivo HTML
-    return render_template('index.html')
+    # Lógica de Negocio: Calcular métricas
+    if current_user.is_authenticated:
+        total_productos = Producto.query.count()
+        productos_bajos = Producto.query.filter(Producto.stock < 5).count()
+        # Sumar total de ventas (requiere importar func)
+        from sqlalchemy import func
+        total_ventas_dinero = db.session.query(func.sum(Venta.total)).scalar() or 0
+    else:
+        # Valores por defecto si no está logueado
+        total_productos = 0
+        productos_bajos = 0
+        total_ventas_dinero = 0
+
+    return render_template('index.html', 
+                           total_productos=total_productos, 
+                           bajos=productos_bajos, 
+                           dinero=total_ventas_dinero)
 
 
 # --- RUTAS DE AUTENTICACIÓN ---
