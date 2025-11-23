@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import send_file
 import io
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pytz
@@ -127,33 +127,33 @@ def logout():
 @app.route('/productos', methods=['GET', 'POST'])
 @login_required
 def gestionar_productos():
+    # 1. ESTO SE QUEDA IGUAL (Guardar producto nuevo)
     if request.method == 'POST':
-        # 1. Recibir datos del formulario HTML
         nombre_form = request.form['nombre']
         precio_form = float(request.form['precio'])
         stock_form = int(request.form['stock'])
 
-        # 2. Crear el objeto Producto
         nuevo_producto = Producto(nombre=nombre_form, precio=precio_form, stock=stock_form)
-
-        # 3. Guardar en Base de Datos
         db.session.add(nuevo_producto)
         db.session.commit()
-        
-        # 4. Recargar la página para ver el cambio
+        flash('Producto agregado correctamente', 'success')
         return redirect(url_for('gestionar_productos'))
 
-    # Si es GET, sacamos todos los productos de la DB
-    query_busqueda = request.args.get('q') # Captura lo que escriben en el buscador
+    
+    page = request.args.get('page', 1, type=int)
+    cant_por_pagina = 10 # Mostraremos 10 productos por vez
+
+    query_busqueda = request.args.get('q') # Captura el buscador
     
     if query_busqueda:
-        # Filtra si escribieron algo
-        lista_productos = Producto.query.filter(Producto.nombre.contains(query_busqueda)).all()
+        # Filtramos Y paginamos
+        pagination = Producto.query.filter(Producto.nombre.contains(query_busqueda)).paginate(page=page, per_page=cant_por_pagina, error_out=False)
     else:
-        # Si no escribieron nada, trae todo normal
-        lista_productos = Producto.query.all()
+        # Solo paginamos todo
+        pagination = Producto.query.paginate(page=page, per_page=cant_por_pagina, error_out=False)
         
-    return render_template('productos.html', productos=lista_productos)
+    
+    return render_template('productos.html', pagination=pagination)
 
 
 # --- RUTA DE VENTAS ---
@@ -221,18 +221,28 @@ def ver_historial():
     return render_template('historial.html', ventas=ventas_realizadas)
 
 
-# --- RUTA ELIMINAR PRODUCTO ---
+# --- RUTA ELIMINAR PRODUCTO  ---
 @app.route('/eliminar/<int:id>')
 @login_required
 def eliminar_producto(id):
-    producto_a_borrar = Producto.query.get_or_404(id)
+    # 1. Buscamos el producto
+    producto = Producto.query.get_or_404(id)
     
     try:
-        db.session.delete(producto_a_borrar)
+        db.session.query(DetalleVenta).filter(DetalleVenta.producto_id == id).delete()
+        
+        # 2. Ahora sí, borramos el producto
+        db.session.delete(producto)
+        
+        # 3. Guardamos los cambios
         db.session.commit()
-        flash('Producto eliminado correctamente.', 'success')
-    except:
-        flash('Error al eliminar. Puede que tenga ventas asociadas.', 'danger')
+        
+        flash('Producto y su historial eliminados correctamente.', 'success')
+        
+    except Exception as e:
+        db.session.rollback() # Si falla, deshacemos
+        print(f"Error detectado: {e}") # Mira la terminal si sale error
+        flash(f'Error al eliminar: {e}', 'danger')
 
     return redirect(url_for('gestionar_productos'))
 
@@ -290,6 +300,25 @@ def exportar_excel():
     # 5. Enviamos el archivo al navegador
     return send_file(output, download_name="reporte_ventas.xlsx", as_attachment=True)
 
+
+# --- API PARA EL GRÁFICO (Datos JSON) ---
+@app.route('/api/datos_grafico')
+@login_required
+def datos_grafico():
+    # Traemos todos los productos
+    productos = Producto.query.all()
+    
+    # Creamos dos listas vacías
+    nombres = []
+    stocks = []
+    
+    # Llenamos las listas con los datos reales
+    for p in productos:
+        nombres.append(p.nombre)
+        stocks.append(p.stock)
+        
+    # Enviamos los datos en formato JSON (JavaScript Object Notation)
+    return jsonify({'nombres': nombres, 'stocks': stocks})
 
 
 # Arrancar
