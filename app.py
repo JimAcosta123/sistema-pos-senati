@@ -96,8 +96,21 @@ def login():
         return redirect(url_for('home'))
 
     if request.method == 'POST':
+        
+        nombre_form = request.form['nombre']
+        precio_form = float(request.form['precio'])
+        stock_form = int(request.form['stock'])
+
+        # --- VALIDACIÓN DE SEGURIDAD (NUEVO) ---
+        if precio_form < 0 or stock_form < 0:
+            flash('Error: No se permiten números negativos.', 'danger')
+            return redirect(url_for('gestionar_productos'))
+        
+        
         user_form = request.form['username']
         pass_form = request.form['password']
+        
+        
 
         # Buscamos al usuario en la BD
         usuario = Usuario.query.filter_by(username=user_form).first()
