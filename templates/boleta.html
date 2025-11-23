@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Boleta #{{ venta.id }}</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #eee; }
+        .ticket {
+            width: 300px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        h2, p { text-align: center; margin: 5px 0; }
+        .linea { border-bottom: 1px dashed #000; margin: 10px 0; }
+        table { width: 100%; font-size: 12px; }
+        .total { font-weight: bold; font-size: 14px; text-align: right; }
+        @media print {
+            body { background: none; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <h2>SENATI MARKET</h2>
+        <p>RUC: 20123456789</p>
+        <p>Fecha: {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</p>
+        <p>Ticket N°: {{ "%06d"|format(venta.id) }}</p>
+        
+        <div class="linea"></div>
+        
+        <table>
+            <thead>
+                <tr style="text-align:left"><th>Prod.</th><th>Cant.</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+                {% for item in venta.detalles %}
+                <tr>
+                    <td>{{ item.producto.nombre[:10] }}</td> <td>{{ item.cantidad }}</td>
+                    <td>{{ item.precio_unitario * item.cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="linea"></div>
+
+        <p class="total">TOTAL A PAGAR: S/. {{ "%.2f"|format(venta.total) }}</p>
+        
+        <div class="linea"></div>
+        <p>¡Gracias por su compra!</p>
+        
+        <br>
+        <button class="no-print" onclick="window.print()" style="width:100%">IMPRIMIR 🖨️</button>
+        <br><br>
+        <a href="/historial" class="no-print" style="text-align:center; display:block">Volver</a>
+    </div>
+</body>
+</html>
