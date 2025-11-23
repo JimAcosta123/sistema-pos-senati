@@ -1,54 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4 text-center">Historial de Transacciones 📋</h2>
-    
-    <div class="d-flex justify-content-end mb-3">
-       <a href="/exportar_excel" class="btn btn-success">
-        📥 Descargar Reporte Excel
-       </a>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">📜 Reporte General de Ventas</h2>
+        <a href="/exportar_excel" class="btn btn-success shadow-sm">
+            📥 Descargar Reporte Excel
+        </a>
     </div>
-    
-    <div class="table-responsive">
-        <table class="table table-bordered shadow">
-            <thead class="table-dark">
-                <tr>
-                    <td>
-                        <a href="/boleta/{{ venta.id }}" target="_blank" class="btn btn-outline-dark btn-sm">
-                            <strong>#{{ venta.id }}</strong> 📄
-                        </a>
-                    </td>
-                    <th>Fecha y Hora</th>
-                    <th>Total Venta</th>
-                    <th>Detalles (Productos)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for venta in ventas %}
-                <tr>
-                    <td><strong>{{ venta.id }}</strong></td>
-                    <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                    <td class="text-success fw-bold">{{ venta.total | moneda }}</td>
-                    <td>
-                        <ul class="list-group list-group-flush">
-                            {% for item in venta.detalles %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ item.producto.nombre }} 
-                                <span class="badge bg-primary rounded-pill">{{ item.cantidad }} un.</span>
-                                <span class="text-muted small">x S/. {{ item.precio_unitario }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted">No se han registrado ventas aún.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th># Ticket</th>
+                            <th>Fecha y Hora</th>
+                            <th>Total Venta</th>
+                            <th>Detalles (Productos)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venta in ventas %}
+                        <tr>
+                            <td class="text-center align-middle">
+                                <a href="/boleta/{{ venta.id }}" target="_blank" class="btn btn-outline-dark btn-sm" title="Imprimir Ticket">
+                                    🧾 #{{ "%06d"|format(venta.id) }}
+                                </a>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
+                            </td>
+
+                            <td class="text-center align-middle">
+                                <span class="badge bg-success fs-6">
+                                    {{ venta.total | moneda }}
+                                </span>
+                            </td>
+
+                            <td class="align-middle">
+                                <ul class="list-group list-group-flush small">
+                                    {% for item in venta.detalles %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                                        {{ item.producto.nombre }}
+                                        <span class="badge bg-primary rounded-pill">{{ item.cantidad }} un.</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center p-5 text-muted">
+                                <h4>📭 No hay ventas registradas</h4>
+                                <p>Ve a "Nueva Venta" para realizar tu primera transacción.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
