@@ -321,6 +321,16 @@ def datos_grafico():
     return jsonify({'nombres': nombres, 'stocks': stocks})
 
 
+# --- MANEJO DE ERRORES ---
+@app.errorhandler(404)
+def pagina_no_encontrada(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def error_interno(e):
+    return render_template('500.html'), 500
+
+
 # Arrancar
 if __name__ == '__main__':
     app.run(debug=True)
