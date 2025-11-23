@@ -29,7 +29,7 @@
                 <tr>
                     <td><strong>{{ venta.id }}</strong></td>
                     <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                    <td class="text-success fw-bold">S/. {{ "%.2f"|format(venta.total) }}</td>
+                    <td class="text-success fw-bold">{{ venta.total | moneda }}</td>
                     <td>
                         <ul class="list-group list-group-flush">
                             {% for item in venta.detalles %}

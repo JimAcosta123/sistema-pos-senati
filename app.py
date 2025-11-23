@@ -11,6 +11,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # 1. Configuración de Flask
 app = Flask(__name__)
+# --- FILTROS PERSONALIZADOS (Jinja2) ---
+@app.template_filter('moneda')
+def formato_moneda(valor):
+    """Convierte un número en formato moneda Perú: S/. 10.50"""
+    valor = float(valor)
+    return "S/. {:,.2f}".format(valor)
 
 # 2. Configuración de la Base de Datos (SQLite por ahora)
 # Esto creará un archivo llamado "inventario.db" en tu carpeta
