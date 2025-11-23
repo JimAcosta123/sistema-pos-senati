@@ -3,6 +3,38 @@
 {% block content %}
 <div class="text-center mt-4">
     <h1 class="display-5">Bienvenido al Sistema POS</h1>
+
+    
+    {% if current_user.is_authenticated %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📦 Total Productos</h5>
+                <p class="card-text display-6">{{ total_productos }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">💰 Ventas Totales</h5>
+                <p class="card-text display-6">S/. {{ "%.2f"|format(dinero) }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">⚠️ Stock Bajo</h5>
+                <p class="card-text display-6">{{ bajos }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
     <p class="lead">Control de inventario y ventas.</p>
     
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
