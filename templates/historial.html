@@ -14,7 +14,11 @@
         <table class="table table-bordered shadow">
             <thead class="table-dark">
                 <tr>
-                    <th># Boleta</th>
+                    <td>
+                        <a href="/boleta/{{ venta.id }}" target="_blank" class="btn btn-outline-dark btn-sm">
+                            <strong>#{{ venta.id }}</strong> 📄
+                        </a>
+                    </td>
                     <th>Fecha y Hora</th>
                     <th>Total Venta</th>
                     <th>Detalles (Productos)</th>
