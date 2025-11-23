@@ -315,6 +315,14 @@ def exportar_excel():
     return send_file(output, download_name="reporte_ventas.xlsx", as_attachment=True)
 
 
+# --- RUTA VER BOLETA INDIVIDUAL ---
+@app.route('/boleta/<int:id>')
+@login_required
+def ver_boleta(id):
+    venta = Venta.query.get_or_404(id)
+    return render_template('boleta.html', venta=venta)
+
+
 # --- API PARA EL GRÁFICO (Datos JSON) ---
 @app.route('/api/datos_grafico')
 @login_required
