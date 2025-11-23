@@ -377,6 +377,11 @@ def pagina_no_encontrada(e):
 def error_interno(e):
     return render_template('500.html'), 500
 
+# --- RUTA DE INFORMACIÓN ---
+@app.route('/acerca')
+def acerca():
+    return render_template('acerca.html')
+
 
 # Arrancar
 if __name__ == '__main__':
