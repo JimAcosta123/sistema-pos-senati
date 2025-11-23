@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import send_file
 import io
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pytz
@@ -387,6 +387,13 @@ def error_interno(e):
 @app.route('/acerca')
 def acerca():
     return render_template('acerca.html')
+
+
+# --- RUTA DE RESPALDO (BACKUP) ---
+@app.route('/backup_db')
+@login_required
+def descargar_backup():
+    return send_file('inventario.db', as_attachment=True, download_name="backup_inventario.sqlite")
 
 
 # Arrancar

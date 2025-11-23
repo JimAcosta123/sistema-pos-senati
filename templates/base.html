@@ -29,6 +29,9 @@
                         <span class="navbar-text text-white fw-bold">Hola, {{ current_user.username }}</span>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/backup_db" title="Descargar Copia de Seguridad">💾 Backup</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-warning" href="/logout">Salir 🚪</a>
                     </li>
                 {% else %}
