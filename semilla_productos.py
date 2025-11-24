@@ -66,6 +66,7 @@ lista_productos = [
 print("🚀 Iniciando carga masiva de inventario...")
 
 with app.app_context():
+    db.create_all()
     contador = 0
     for data in lista_productos:
         # Verificar si ya existe para no duplicar

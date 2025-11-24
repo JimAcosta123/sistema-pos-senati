@@ -17,7 +17,7 @@
                         <tr>
                             <th># Ticket</th>
                             <th>Fecha y Hora</th>
-                            <th>Total Venta</th>
+                            <th>Facturación / Cliente</th> <th>Total Venta</th>
                             <th>Detalles (Productos)</th>
                         </tr>
                     </thead>
@@ -25,7 +25,7 @@
                         {% for venta in ventas %}
                         <tr>
                             <td class="text-center align-middle">
-                                <a href="/boleta/{{ venta.id }}" target="_blank" class="btn btn-outline-dark btn-sm" title="Imprimir Ticket">
+                                <a href="/boleta/{{ venta.id }}" target="_blank" class="btn btn-outline-dark btn-sm" title="Imprimir Ticket Local">
                                     🧾 #{{ "%06d"|format(venta.id) }}
                                 </a>
                             </td>
@@ -34,6 +34,19 @@
                                 {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
                             </td>
 
+                            <td class="text-center align-middle">
+                                {% if venta.serie == 'ERROR' %}
+                                    <span class="badge bg-danger">Error Conexión</span>
+                                {% elif venta.serie %}
+                                    <a href="{{ venta.enlace_pdf }}" target="_blank" class="btn btn-primary btn-sm mb-1">
+                                        📄 {{ venta.serie }}-{{ venta.correlativo }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted fw-bold">{{ venta.cliente_nombre }}</small>
+                                {% else %}
+                                    <span class="badge bg-secondary">Venta Local</span>
+                                {% endif %}
+                            </td>
                             <td class="text-center align-middle">
                                 <span class="badge bg-success fs-6">
                                     {{ venta.total | moneda }}
@@ -53,7 +66,7 @@
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="4" class="text-center p-5 text-muted">
+                            <td colspan="5" class="text-center p-5 text-muted">
                                 <h4>📭 No hay ventas registradas</h4>
                                 <p>Ve a "Nueva Venta" para realizar tu primera transacción.</p>
                             </td>
